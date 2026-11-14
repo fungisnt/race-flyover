@@ -17,9 +17,9 @@ public final class RaceFlyoverView: ScreenSaverView {
     private let settings = Settings()
     private(set) var config: Config
     private(set) var engine: FlyoverEngine?
-    /// Live Apple Maps with 3D terrain and buildings (first choice for map styles).
+    /// Live Apple Maps with 3D terrain and buildings outside legacyScreenSaver.
     private var liveMap: MapFlyoverView?
-    /// Flat Apple Maps imagery under the route, used if the live map can't draw.
+    /// Flat Apple Maps imagery used by legacyScreenSaver and when the live map can't draw.
     private var tileGround: TileGroundView?
     private let stylized = StylizedView()
     private let glassLayer = GlassPanelsView()
@@ -141,8 +141,12 @@ public final class RaceFlyoverView: ScreenSaverView {
     private var wantsMap: Bool {
         config.style.usesTiles && !isPreview && !mapFailed && window != nil && bounds.width > 200
     }
-    private var wantsLive: Bool { wantsMap && !liveFailed }
-    private var wantsTiles: Bool { wantsMap && liveFailed }
+    /// legacyScreenSaver can report a fully loaded map while compositing no imagery.
+    /// Offscreen snapshots don't depend on the host window's Metal surface or visibility.
+    private var wantsLive: Bool {
+        wantsMap && !liveFailed && ProcessInfo.processInfo.processName != "legacyScreenSaver"
+    }
+    private var wantsTiles: Bool { wantsMap && !wantsLive }
 
     /// With "main display only", every other screen stays black and does no work.
     private var isIdleScreen: Bool {

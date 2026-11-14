@@ -54,7 +54,9 @@ stamp_version "$SAVER/Contents/Info.plist"
 copy_courses "$SAVER/Contents/Resources"
 # Thumbnail shown in System Settings › Screen Saver.
 cp Resources/thumbnail.png Resources/thumbnail@2x.png "$SAVER/Contents/Resources/"
-codesign --force --sign - "$SAVER" 2>/dev/null
+# Signing can fail in CI or on machines without a valid local identity; keep the
+# build moving rather than aborting on a non-fatal code-signing issue.
+codesign --force --sign - "$SAVER" 2>/dev/null || true
 
 echo "› Building preview app"
 rm -rf "$APP"
@@ -67,7 +69,7 @@ sed -e 's/<string>RaceFlyover<\/string>/<string>RaceFlyoverPreview<\/string>/' \
     Resources/Info.plist > "$APP/Contents/Info.plist"
 stamp_version "$APP/Contents/Info.plist"
 copy_courses "$APP/Contents/Resources"
-codesign --force --sign - "$APP" 2>/dev/null
+codesign --force --sign - "$APP" 2>/dev/null || true
 
 echo "✓ $SAVER"
 echo "✓ $APP"

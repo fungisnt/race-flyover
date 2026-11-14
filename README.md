@@ -25,16 +25,27 @@ A Mac screensaver that flies along the world's major marathon courses, so you le
 - An internet connection for the Apple Maps styles, place names and landmarks. The drawn styles work offline.
 - Xcode or Apple's Command Line Tools to build it.
 
+## Install
+
+Download the installer from the [releases page](../../releases) and run it — it puts
+Race Flyover in `/Library/Screen Savers`. The installer isn't signed with an Apple
+Developer ID, so the first time, **right-click the .pkg and choose Open**. After
+installing, open **System Settings › Screen Saver**, scroll to **Other** and choose
+**Race Flyover**. Click **Options…** to change the settings.
+
+The installer is built by `.github/workflows/installer.yml`, which runs on every `v*` tag
+(and on demand) and attaches the `.pkg` to the release. See [docs/RELEASING.md](docs/RELEASING.md)
+for how to cut a release and how to sign the installer.
+
 ## Build
 
 ```bash
 ./build.sh install    # build and install the screensaver
 ./build.sh preview    # build and open it in a window
 ./build.sh release    # build and zip it for a GitHub release
-```
 
-After installing, open **System Settings › Screen Saver**, scroll to **Other** and choose **Race Flyover**.
-Click **Options…** to change the settings.
+tools/build_installer.sh    # package build/RaceFlyover.saver as a .pkg installer
+```
 
 In the preview window: **Space** pauses, **← / →** jumps 1 km, **N** goes to the next course.
 
